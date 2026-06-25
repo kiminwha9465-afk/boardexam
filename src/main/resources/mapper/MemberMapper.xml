@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.board0625.mapper.MemberMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO member (member_id, password, email, nickname)
+        VALUES (#{memberId}, #{password}, #{email}, #{nickname})
+    </insert>
+
+    <select id="selectById" resultType="MemberDTO">
+        SELECT * FROM member WHERE id = #{id}
+    </select>
+
+    <select id="selectByMemberId" resultType="MemberDTO">
+        SELECT * FROM member WHERE member_id = #{memberId}
+    </select>
+
+    <update id="update">
+        UPDATE member
+        <set>
+            <if test="nickname != null and nickname != ''">nickname = #{nickname},</if>
+            <if test="email    != null and email    != ''">email    = #{email},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM member WHERE id = #{id}
+    </delete>
+
+    <select id="existsByMemberId" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM member WHERE member_id = #{memberId}
+    </select>
+
+    <select id="existsByNickname" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM member WHERE nickname = #{nickname}
+    </select>
+
+    <select id="existsByEmail" resultType="boolean">
+        SELECT COUNT(*) > 0 FROM member WHERE email = #{email}
+    </select>
+
+</mapper>

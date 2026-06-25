@@ -1,0 +1,19 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Logs
+*.log
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# Uploaded files (runtime data, not source)
+uploads/
+
+# OS
+.DS_Store
+Thumbs.db

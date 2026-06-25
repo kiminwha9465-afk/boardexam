@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.board0625.mapper.BoardImageMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO board_image (board_id, image_path, sort_order)
+        VALUES (#{boardId}, #{imagePath}, #{sortOrder})
+    </insert>
+
+    <select id="selectByBoardId" resultType="BoardImageDTO">
+        SELECT * FROM board_image
+        WHERE board_id = #{boardId}
+        ORDER BY sort_order
+    </select>
+
+    <select id="selectById" resultType="BoardImageDTO">
+        SELECT * FROM board_image WHERE id = #{id}
+    </select>
+
+    <delete id="deleteByBoardId">
+        DELETE FROM board_image WHERE board_id = #{boardId}
+    </delete>
+
+    <delete id="deleteById">
+        DELETE FROM board_image WHERE id = #{id}
+    </delete>
+
+</mapper>

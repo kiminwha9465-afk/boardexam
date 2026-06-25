@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.board0625.mapper.BoardMapper">
+
+    <sql id="searchCondition">
+        <where>
+            <if test="keyword != null and keyword != ''">
+                <choose>
+                    <when test="searchType == 'title'">
+                        b.title LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'content'">
+                        b.content LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <when test="searchType == 'writer'">
+                        m.nickname LIKE CONCAT('%', #{keyword}, '%')
+                    </when>
+                    <otherwise>
+                        (b.title   LIKE CONCAT('%', #{keyword}, '%')
+                        OR b.content LIKE CONCAT('%', #{keyword}, '%'))
+                    </otherwise>
+                </choose>
+            </if>
+        </where>
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO board (title, content, member_id)
+        VALUES (#{title}, #{content}, #{memberId})
+    </insert>
+
+    <select id="selectById" resultType="BoardDTO">
+        SELECT b.*,
+               m.nickname AS member_nickname,
+               (SELECT COUNT(*) FROM comment c WHERE c.board_id = b.id) AS comment_count
+        FROM board b
+                 JOIN member m ON b.member_id = m.id
+        WHERE b.id = #{id}
+    </select>
+
+    <select id="selectAll" resultType="BoardDTO">
+        SELECT b.*,
+               m.nickname AS member_nickname,
+               (SELECT COUNT(*) FROM comment c WHERE c.board_id = b.id) AS comment_count
+        FROM board b
+                 JOIN member m ON b.member_id = m.id
+        <include refid="searchCondition"/>
+        ORDER BY b.id DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*)
+        FROM board b
+                 JOIN member m ON b.member_id = m.id
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="selectByMemberId" resultType="BoardDTO">
+        SELECT b.*,
+               m.nickname AS member_nickname,
+               (SELECT COUNT(*) FROM comment c WHERE c.board_id = b.id) AS comment_count
+        FROM board b
+                 JOIN member m ON b.member_id = m.id
+        WHERE b.member_id = #{memberId}
+        ORDER BY b.id DESC
+    </select>
+
+    <select id="selectByMemberIdPaged" resultType="BoardDTO">
+        SELECT b.*,
+               m.nickname AS member_nickname,
+               (SELECT COUNT(*) FROM comment c WHERE c.board_id = b.id) AS comment_count
+        FROM board b
+                 JOIN member m ON b.member_id = m.id
+        WHERE b.member_id = #{memberId}
+        ORDER BY b.id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countByMemberId" resultType="int">
+        SELECT COUNT(*) FROM board WHERE member_id = #{memberId}
+    </select>
+
+    <update id="update">
+        UPDATE board
+        SET title      = #{title},
+            content    = #{content},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM board WHERE id = #{id}
+    </delete>
+
+    <update id="updateViewCount">
+        UPDATE board SET view_count = view_count + 1 WHERE id = #{id}
+    </update>
+
+</mapper>
